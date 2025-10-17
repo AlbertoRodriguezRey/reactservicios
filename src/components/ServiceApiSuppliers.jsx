@@ -4,7 +4,8 @@ import axios from 'axios'
 export default class ServiceApiSuppliers extends Component {
     cajaId = React.createRef();
     state = {
-        suppliers:[]
+        suppliers:[],
+        selectedSupplier: null
     }
     url = "https://services.odata.org/V4/Northwind/Northwind.svc/Suppliers"
     //CREAMOS UN METODO PARA CARGAR LOS SUPPLIERS
@@ -36,14 +37,19 @@ export default class ServiceApiSuppliers extends Component {
             axios.get(urlById).then((response) => {
                 console.log("Leyendo supplier por ID");
                 this.setState({
-                    suppliers: [response.data]
+                    selectedSupplier: response.data
                 })
             }).catch((error) => {
                 console.log("Error al buscar supplier por ID:", error);
                 alert("No se encontró el supplier con ID: " + id);
+                this.setState({
+                    selectedSupplier: null
+                })
             })
         } else {
-            this.loadSuppliers();
+            this.setState({
+                selectedSupplier: null
+            })
         }
     }
 
@@ -61,9 +67,16 @@ export default class ServiceApiSuppliers extends Component {
         }
         </ul>
         <label>Seleccione un ID:</label><br/>
-        <input type="text" ref={this.cajaId} placeholder="Ingrese ID del supplier"/>
-        <button type="submit">Buscar por ID</button>
-        <button type="button" onClick={this.loadSuppliers}>Cargar Todos</button>
+        <input type="text" ref={this.cajaId}/>
+        <button type="submit">Buscar proovedor</button>
+        
+        {this.state.selectedSupplier && (
+          <div>
+            <ul>
+                <li>Nombre: {this.state.selectedSupplier.ContactName}</li>
+            </ul>
+          </div>
+        )}
       </form>)
   }
 }
