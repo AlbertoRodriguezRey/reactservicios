@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import Global from '../Global';
 
 export default class ServiceApiSuppliers extends Component {
     cajaId = React.createRef();
@@ -7,13 +8,13 @@ export default class ServiceApiSuppliers extends Component {
         suppliers:[],
         selectedSupplier: null
     }
-    url = "https://services.odata.org/V4/Northwind/Northwind.svc/Suppliers"
+    url = Global.urlNorthwind;
     //CREAMOS UN METODO PARA CARGAR LOS SUPPLIERS
     loadSuppliers = () => {
-
+        let request = "Suppliers";
         console.log("Antes del servicio")
         //LA INFORMACION YA SABEMOS DE DONDE VIENE
-        axios.get(this.url).then((response) => {
+        axios.get(this.url + request).then((response) => {
             console.log("Leyendo servicio");
             //SACAMOS LA INFO DE RESPONSE
             this.setState({
@@ -32,8 +33,9 @@ export default class ServiceApiSuppliers extends Component {
     loadSuppliersById = (event) => {
         event.preventDefault();
         let id = parseInt(this.cajaId.current.value);
+        let request = "Suppliers";
         if (id) {
-            let urlById = this.url + "(" + id + ")";
+            let urlById = this.url + request + "(" + id + ")";
             axios.get(urlById).then((response) => {
                 console.log("Leyendo supplier por ID");
                 this.setState({
@@ -72,6 +74,7 @@ export default class ServiceApiSuppliers extends Component {
         {this.state.selectedSupplier && (
           <div>
             <h1>Compañia: {this.state.selectedSupplier.CompanyName}</h1>
+            <h2>Contacto: {this.state.selectedSupplier.ContactName}</h2>
             <h2>Titulo: {this.state.selectedSupplier.ContactTitle}</h2>
             <h3>Direccion: {this.state.selectedSupplier.Address}</h3>
           </div>
