@@ -31,7 +31,7 @@ export default class ServiceApiSuppliers extends Component {
 
     loadSuppliersById = (event) => {
         event.preventDefault();
-        let id = this.cajaId.current.value;
+        let id = parseInt(this.cajaId.current.value);
         if (id) {
             let urlById = this.url + "(" + id + ")";
             axios.get(urlById).then((response) => {
@@ -41,7 +41,6 @@ export default class ServiceApiSuppliers extends Component {
                 })
             }).catch((error) => {
                 console.log("Error al buscar supplier por ID:", error);
-                alert("No se encontró el supplier con ID: " + id);
                 this.setState({
                     selectedSupplier: null
                 })
@@ -72,9 +71,9 @@ export default class ServiceApiSuppliers extends Component {
         
         {this.state.selectedSupplier && (
           <div>
-            <ul>
-                <li>Nombre: {this.state.selectedSupplier.ContactName}</li>
-            </ul>
+            <h1>Compañia: {this.state.selectedSupplier.CompanyName}</h1>
+            <h2>Titulo: {this.state.selectedSupplier.ContactTitle}</h2>
+            <h3>Direccion: {this.state.selectedSupplier.Address}</h3>
           </div>
         )}
       </form>)
