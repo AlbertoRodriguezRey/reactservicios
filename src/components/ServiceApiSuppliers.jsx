@@ -32,29 +32,38 @@ export default class ServiceApiSuppliers extends Component {
         event.preventDefault();
         let id = this.cajaId.current.value;
         if (id) {
-            let aux
+            let urlById = this.url + "(" + id + ")";
+            axios.get(urlById).then((response) => {
+                console.log("Leyendo supplier por ID");
+                this.setState({
+                    suppliers: [response.data]
+                })
+            }).catch((error) => {
+                console.log("Error al buscar supplier por ID:", error);
+                alert("No se encontró el supplier con ID: " + id);
+            })
+        } else {
+            this.loadSuppliers();
         }
+    }
 
   render() {
     return (
-      <form onSubmit={this.loadSuppliers}>
+      <form onSubmit={this.loadSuppliersById}>
         <h1>Servicio Api Suppliers</h1>
         <ul>
         {
             this.state.suppliers.map((supplier, index) => {
-                return <div key={index}>
-                    <li>ID: {supplier.SupplierID}, Nombre: {supplier.ContactName}</li>
-                </div>
+                return <li key={index}>
+                    ID: {supplier.SupplierID}, Nombre: {supplier.ContactName}
+                </li>
             })
         }
         </ul>
         <label>Seleccione un ID:</label><br/>
-        <input type="text" ref={this.cajaId}/>
-        <button>Cargar Suppliers</button>
-        {
-
-        }
-      </form>
-    )
+        <input type="text" ref={this.cajaId} placeholder="Ingrese ID del supplier"/>
+        <button type="submit">Buscar por ID</button>
+        <button type="button" onClick={this.loadSuppliers}>Cargar Todos</button>
+      </form>)
   }
 }
