@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import Global from '../Global';
 
-export default class EmpleadosDepartamentov2 extends Component {
+export default class EmpleadosOficios extends Component {
     urlEmpleados = Global.urlEmpleados;
     urlDepartamentos = Global.urlDepartamentos;
     selectOficio = React.createRef();
