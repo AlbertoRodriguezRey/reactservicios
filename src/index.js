@@ -18,7 +18,6 @@ import MenuRutas from './components/MenuRutas';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div style={{margin: "auto", width: "50%"}}>
-    <MenuRutas />
     <Router />
   </div>
   

@@ -9,7 +9,7 @@ export default class Collatz extends Component {
     calcularCollatz = () => {
         let numeroCollatz = parseInt(this.props.numero);
         let secuencia = [];
-        while (numeroCollatz !== 1) {
+        while (numeroCollatz != 1) {
             secuencia.push(numeroCollatz);
             if (numeroCollatz % 2 === 0) {
                 numeroCollatz = numeroCollatz / 2;
