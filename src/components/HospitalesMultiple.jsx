@@ -5,6 +5,7 @@ import axios from 'axios'
 
 export default class HospitalesMultiple extends Component {
     selectHospital = React.createRef();
+    cajaIncremento = React.createRef();
     
     url = Global.apiTrabajadores;
     state = {
@@ -26,8 +27,7 @@ export default class HospitalesMultiple extends Component {
         this.loadHospitales();
     }
 
-    getHospitalesSeleccionados = (event) => {
-        event.preventDefault();
+    getSeleccion = () => {
         let aux = [];
         let options = this.selectHospital.current.options;
         for (var option of options){
@@ -35,8 +35,36 @@ export default class HospitalesMultiple extends Component {
                 aux.push(option.value);
             }
         }
+        return aux;
+    }
+
+    getHospitalesSeleccionados = (event) => {
+        event.preventDefault();
+        let aux = this.getSeleccion();
         this.setState({
             hospitalesSeleccionados: aux
+        })
+    }
+
+    incrementarSalarios = (event) => {
+        event.preventDefault();
+        let incremento = this.cajaIncremento.current.value;
+        //idhospital=17&idhospital=22
+        let aux = this.getSeleccion();
+        let data = "";
+        //idhospital=17&idhospital=22
+        for (var id of aux){
+            data += "idhospital=" + id + "&"
+        }
+        //idhospital=19&idhospital=22&
+        //ELIMINAMOS EL ULTIMO CARACTER DEL STRING
+        data = data + "incremento=" + incremento;
+        let request = "api/trabajadores/updatesalariotrabajadoreshospitales?"
+        + data;
+        axios.put(this.url + request).then(response => {
+            this.setState({
+                hospitalesSeleccionados: aux
+            })
         })
     }
 
@@ -54,10 +82,16 @@ export default class HospitalesMultiple extends Component {
                         </option>)
                     })
                 }
-            </select>
+            </select><br/>
             <button onClick={this.getHospitalesSeleccionados} 
             className='btn btn-warning'>
                 Mostrar trabajadores
+            </button><hr/>
+            <label>Incremento salarial</label>
+            <input type="text" ref={this.cajaIncremento}
+            className='form-control'/><br/>
+            <button className='btn btn-info' onClick={this.incrementarSalarios}>
+                Incrementar salarios
             </button>
         </form>
         {
