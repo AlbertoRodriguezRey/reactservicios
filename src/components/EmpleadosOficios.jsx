@@ -1,31 +1,21 @@
 import React, { Component } from 'react'
+import Global from '../Global'
 import axios from 'axios'
-import Global from '../Global';
 
 export default class EmpleadosOficios extends Component {
-    urlEmpleados = Global.urlEmpleados;
-    urlDepartamentos = Global.urlDepartamentos;
+    url = Global.urlEmpleadosOficios;
     selectOficio = React.createRef();
-
-    buscarEmpleados = (event) => {
-        event.preventDefault();
-        let idOficio = this.selectOficio.current.value;
-        let request = "api/Empleados/EmpleadosOficio/" +  idOficio;
-        axios.get(this.urlEmpleados + request).then(response => {
-            console.log("Leyendo Oficios" + response.data);
-            this.setState({
-                empleadosFiltrados: response.data
-            })
-        })
+    state = {
+        empleados: [],
+        empleadosOficios: []
     }
 
     loadOficios = () => {
-        let request = "api/empleados";
-        axios.get(this.urlEmpleados + request).then(response => {
-            console.log("Cargando oficios");
+        var request = "api/empleados";
+        axios.get(this.url + request).then(response => {
+            console.log("Leyendo empleados");
             this.setState({
-                empleados: response.data,
-                empleadosFiltrados: []
+                empleados: response.data
             })
         })
     }
@@ -34,54 +24,53 @@ export default class EmpleadosOficios extends Component {
         this.loadOficios();
     }
 
-    state = {
-        empleados: [],
-        empleadosFiltrados: []
+    buscarEmpleados = (event) => {
+        event.preventDefault();
+        let oficio = this.selectOficio.current.value;
+        let request = "api/empleados/empleadosoficio/" + oficio;
+        axios.get(this.url + request).then(response => {
+            console.log("Filtrando oficios")
+            this.setState({
+                empleadosOficios: response.data
+            })
+        })
     }
-
   render() {
     return (
       <div>
-        <h1 style={{color:"blue"}}>
-            Api empleados oficio
-        </h1>
+        <h1>Empleados Oficios</h1>
         <form>
-            <label>Seleccione Oficio:</label><br/><br/>
             <select ref={this.selectOficio}>
-              {
-                this.state.empleados.filter((empleado, index, self) => 
-                   index === self.findIndex(e => e.oficio === empleado.oficio) 
-                ).map((empleado, index) => {
-                    return (<option key={index} value={empleado.oficio}>
-                        {empleado.oficio}
-                    </option>)
-                })
-              }  
+                {
+                    this.state.empleados.map((empleado, index) => {
+                        return (<option key={index}>{empleado.oficio}</option>)
+                    })
+                }
             </select>
             <button onClick={this.buscarEmpleados}>
                 Buscar empleados
-            </button><br/><br/>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Apellido</th>
-                        <th>Oficio</th>
-                        <th>Salario</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.state.empleadosFiltrados.map((empleado, index) => {
-                            return (<tr key={index}>
-                                <td>{empleado.apellido}</td>
-                                <td>{empleado.oficio}</td>
-                                <td>{empleado.salario}</td>
-                            </tr>)
-                        })
-                    }
-                </tbody>
-            </table>
+            </button>
         </form>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Apellido</th>
+                    <th>Oficio</th>
+                    <th>Salario</th>
+                </tr>
+            </thead>
+            <tbody>
+                {
+                    this.state.empleadosOficios.map((empleado, index)=> {
+                        return (<tr key={index}>
+                            <td>{empleado.apellido}</td>
+                            <td>{empleado.oficio}</td>
+                            <td>{empleado.salario}</td>
+                        </tr>)
+                    })
+                }
+            </tbody>
+        </table>
       </div>
     )
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Empleados from './Empleados'
-import Global from '../../Global';
-import axios from 'axios';
+import Global from '../../Global'
+import axios from 'axios'
 
 export default class Departamentos extends Component {
     url = Global.urlDepartamentos;
@@ -20,7 +20,6 @@ export default class Departamentos extends Component {
             })
         })
     }
-
     componentDidMount = () => {
         this.loadDepartamentos();
     }
@@ -29,10 +28,10 @@ export default class Departamentos extends Component {
         event.preventDefault();
         let idDepartamento = this.selectDepartamento.current.value;
         this.setState({
-            idDepartamento: parseInt(idDepartamento)
+            idDepartamento: idDepartamento
         })
-
     }
+
   render() {
     return (
       <div>
@@ -41,17 +40,20 @@ export default class Departamentos extends Component {
             <select ref={this.selectDepartamento}>
                 {
                     this.state.departamentos.map((departamento, index) => {
-                        return (<option key={index} value={departamento.numero}>
-                            {departamento.nombre}
-                        </option>)
+                        return (<option key={index} 
+                            value={departamento.numero}>
+                                {departamento.nombre}    
+                            </option>)
                     })
                 }
             </select>
-            <button onClick={this.buscarEmpleados}>Buscar Empleados</button>
+            <button onClick={this.buscarEmpleados}>
+                Buscar empleados
+            </button>
         </form>
         {
-            this.state.idDepartamento != 0 &&
-            <Empleados iddepartamentos={this.state.idDepartamento}/>
+            this.state.idDepartamento != 0 && 
+            <Empleados iddepartamento={this.state.idDepartamento}/>
         }
       </div>
     )

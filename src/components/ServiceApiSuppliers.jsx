@@ -1,84 +1,80 @@
 import React, { Component } from 'react'
-import axios from 'axios'
+import axios from 'axios';
 import Global from '../Global';
 
 export default class ServiceApiSuppliers extends Component {
+    urlSuppliers = Global.urlNorthwind;
     cajaId = React.createRef();
+
     state = {
-        suppliers:[],
-        selectedSupplier: null
-    }
-    url = Global.urlNorthwind;
-    //CREAMOS UN METODO PARA CARGAR LOS SUPPLIERS
+        proveedores: [], 
+        supplier: null
+    }    
+
     loadSuppliers = () => {
-        let request = "Suppliers";
-        console.log("Antes del servicio")
-        //LA INFORMACION YA SABEMOS DE DONDE VIENE
-        axios.get(this.url + request).then((response) => {
-            console.log("Leyendo servicio");
-            //SACAMOS LA INFO DE RESPONSE
+        let request = "suppliers";
+        axios.get(this.urlSuppliers + request).then(response => {
+            console.log("Leyendo");
             this.setState({
-                suppliers: response.data.value
+                proveedores: response.data.value
             })
         })
-        console.log("Despues del servicio") 
+    }
+
+    findSupplierId = (event) => {
+        event.preventDefault();
+        let idSupplier = parseInt(this.cajaId.current.value);
+        let request = "suppliers";
+        //REALIZAMOS LA PETICION DE NUEVO A TODOS LOS PROVEEDORES
+        axios.get(this.urlSuppliers + request).then(response => {
+            console.log("Buscando...");
+            for (var supplier of response.data.value){
+                if (supplier.SupplierID == idSupplier){
+                    this.setState({
+                        supplier: supplier
+                    })
+                    break;
+                }
+            }
+        })
     }
 
     componentDidMount = () => {
-        console.log("Creando component");
         this.loadSuppliers();
-        
-    }
-
-    loadSuppliersById = (event) => {
-        event.preventDefault();
-        let id = parseInt(this.cajaId.current.value);
-        let request = "Suppliers";
-        if (id) {
-            let urlById = this.url + request + "(" + id + ")";
-            axios.get(urlById).then((response) => {
-                console.log("Leyendo supplier por ID");
-                this.setState({
-                    selectedSupplier: response.data
-                })
-            }).catch((error) => {
-                console.log("Error al buscar supplier por ID:", error);
-                this.setState({
-                    selectedSupplier: null
-                })
-            })
-        } else {
-            this.setState({
-                selectedSupplier: null
-            })
-        }
     }
 
   render() {
     return (
-      <form onSubmit={this.loadSuppliersById}>
-        <h1>Servicio Api Suppliers</h1>
-        <ul>
+      <div>
+        <h1>Service Api Suppliers</h1>
+        <form>
+            <label>Buscar ID</label>
+            <input type="number" ref={this.cajaId}/>
+            <button onClick={this.findSupplierId}>
+                Buscar proveedor
+            </button>
+        </form>
         {
-            this.state.suppliers.map((supplier, index) => {
-                return <li key={index}>
-                    ID: {supplier.SupplierID}, Nombre: {supplier.ContactName}
-                </li>
-            })
+            this.state.supplier && 
+            (
+            <div>
+                <h1>Company: {this.state.supplier.CompanyName}</h1>
+                <h2>Title: {this.state.supplier.ContactTitle}</h2>
+                <h2>Dirección: {this.state.supplier.Address}</h2>
+            </div>
+            )
         }
+        <ul>
+            {
+                this.state.proveedores.map((supplier, index) => {
+                    return (<li key={index}>
+                        Id: {supplier.SupplierID} - 
+                        {supplier.ContactName}
+                        </li>)
+                })
+            }
         </ul>
-        <label>Seleccione un ID:</label><br/>
-        <input type="text" ref={this.cajaId}/>
-        <button type="submit">Buscar proovedor</button>
-        
-        {this.state.selectedSupplier && (
-          <div>
-            <h1>Compañia: {this.state.selectedSupplier.CompanyName}</h1>
-            <h2>Contacto: {this.state.selectedSupplier.ContactName}</h2>
-            <h2>Titulo: {this.state.selectedSupplier.ContactTitle}</h2>
-            <h3>Direccion: {this.state.selectedSupplier.Address}</h3>
-          </div>
-        )}
-      </form>)
+      </div>
+    )
   }
 }
